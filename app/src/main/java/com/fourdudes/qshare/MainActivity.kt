@@ -1,10 +1,15 @@
 package com.fourdudes.qshare
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import com.fourdudes.qshare.AboutPage.AboutActivity
+import com.fourdudes.qshare.HelpPage.HelpActivity
+import com.fourdudes.qshare.Scan.ScanActivity
+import com.fourdudes.qshare.Settings.SettingsActivity
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 
@@ -24,7 +29,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.scan_fab -> {
-                    //TODO start scan code activity
+                    val intent = Intent(this, ScanActivity::class.java)
+                    startActivity(intent)
                     speedDialView.close()
                     true
                 }
@@ -47,15 +53,18 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.about_menu_item -> {
-                //TODO start about activity
+                val intent = Intent(this, AboutActivity::class.java)
+                startActivity(intent)
                 true
             }
             R.id.help_menu_item -> {
-                //TODO start help activity
+                val intent = Intent(this, HelpActivity::class.java)
+                startActivity(intent)
                 true
             }
             R.id.settings_menu_item -> {
-                //TODO start settings activity
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)

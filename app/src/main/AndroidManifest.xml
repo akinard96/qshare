@@ -9,11 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ViewCode.ViewCode"></activity>
+        <activity android:name=".HelpPage.HelpActivity"></activity>
+        <activity android:name=".AboutPage.AboutActivity" />
+        <activity android:name=".ViewCode.ViewCode" />
         <activity
             android:name=".Settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".Search.SearchActivity"></activity>
+        <activity android:name=".Search.SearchActivity" />
         <activity android:name=".Scan.ScanActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
