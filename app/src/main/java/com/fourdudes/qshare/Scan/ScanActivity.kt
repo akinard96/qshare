@@ -1,12 +1,13 @@
 package com.fourdudes.qshare.Scan
 
-import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import com.fourdudes.qshare.R
 
-class ScanActivity: AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+class ScanActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_scan)
     }
 }

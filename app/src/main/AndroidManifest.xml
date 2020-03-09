@@ -13,6 +13,8 @@
         <activity
             android:name=".Settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
+        <activity android:name=".Search.SearchActivity"></activity>
+        <activity android:name=".Scan.ScanActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
