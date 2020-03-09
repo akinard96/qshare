@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/upload_fab"
+        android:title="Upload"
+        android:icon="@drawable/ic_qr_fab" />
+
+    <item
+        android:id="@+id/scan_fab"
+        android:title="Scan Code"
+        android:icon="@drawable/ic_scan_fab" />
+
+</menu>
