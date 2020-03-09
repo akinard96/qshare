@@ -2,4 +2,5 @@
     <string name="app_name">Qshare</string>
     <string name="settings">Settings</string>
     <string name="exit">Exit</string>
+    <string name="scanner">qShare Scanner</string>
 </resources>
