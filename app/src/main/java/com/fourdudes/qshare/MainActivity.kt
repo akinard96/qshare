@@ -6,10 +6,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.Toast
 import com.fourdudes.qshare.AboutPage.AboutActivity
 import com.fourdudes.qshare.HelpPage.HelpActivity
 import com.fourdudes.qshare.Scan.ScanActivity
 import com.fourdudes.qshare.Settings.SettingsActivity
+import com.fourdudes.qshare.list.ItemListFragment
+import com.google.android.material.snackbar.Snackbar
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 
@@ -19,12 +22,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.list_holder)
+        if(currentFragment == null) {
+            val fragment = ItemListFragment()
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.list_holder, fragment)
+                .commit()
+        }
+
         val speedDialView = findViewById<SpeedDialView>(R.id.speed_dial)
         speedDialView.inflate(R.menu.fab_actions_menu)
         speedDialView.setOnActionSelectedListener(SpeedDialView.OnActionSelectedListener { actionItem ->
             when(actionItem.id) {
                 R.id.upload_fab -> {
-                    //TODO present file picker
+                    Toast.makeText(this,
+                        "open android file selector",
+                        Toast.LENGTH_SHORT)
+                    .show()
                     speedDialView.close()
                     true
                 }
