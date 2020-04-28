@@ -3,6 +3,7 @@ package com.fourdudes.qshare
 import android.app.Activity
 import android.content.Intent
 import android.content.Intent.*
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,15 +15,31 @@ import com.fourdudes.qshare.AboutPage.AboutActivity
 import com.fourdudes.qshare.HelpPage.HelpActivity
 import com.fourdudes.qshare.Scan.ScanActivity
 import com.fourdudes.qshare.Settings.SettingsActivity
+import com.fourdudes.qshare.drive.DriveServiceHelper
 import com.fourdudes.qshare.list.ItemListFragment
-import com.google.android.gms.drive.Drive
-import com.google.android.gms.drive.DriveFile
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.Scope
+import com.google.api.client.extensions.android.http.AndroidHttp
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
+import com.google.api.client.json.gson.GsonFactory
+import com.google.api.services.drive.Drive
+import com.google.api.services.drive.DriveScopes
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.leinardi.android.speeddial.SpeedDialView
+import java.util.*
 
 const val REQUEST_CODE_FILE = 0
+const val REQUEST_CODE_SIGN_IN = 1
 const val LOG_TAG = "4dudes.MainActivity"
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var driveServiceHelper: DriveServiceHelper
+    private lateinit var driveService: Drive
+    private var signedIn = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +54,9 @@ class MainActivity : AppCompatActivity() {
                 .commit()
         }
 
+        //prompt the user to sign in via google drive
+        requestSignIn()
+
         val speedDialView = findViewById<SpeedDialView>(R.id.speed_dial)
         speedDialView.inflate(R.menu.fab_actions_menu)
         speedDialView.setOnActionSelectedListener(SpeedDialView.OnActionSelectedListener { actionItem ->
@@ -46,10 +66,16 @@ class MainActivity : AppCompatActivity() {
                         "open android file selector",
                         Toast.LENGTH_SHORT)
                     .show()
-                    val intent = Intent(ACTION_GET_CONTENT)
-                    intent.type = "*/*"
-                    val chooserIntent = createChooser(intent, "Choose a file!")
-                    startActivityForResult(chooserIntent, REQUEST_CODE_FILE)
+
+                    if(signedIn){
+                        val chooserIntent = driveServiceHelper.createFilePickerIntent()
+                        startActivityForResult(chooserIntent, REQUEST_CODE_FILE)
+                    }
+                    else {
+                        Log.d(LOG_TAG, "User not signed in!")
+                        //TODO present dialog explaining that the user must sign in
+                    }
+
 //                    intent.putExtra(CATEGORY_OPENABLE)
                     speedDialView.close()
                     true
@@ -81,8 +107,16 @@ class MainActivity : AppCompatActivity() {
                 }
                 val fileUri = data.data ?: return
                 Log.d(LOG_TAG, "file received: $fileUri")
+                openFileFromFilePicker(fileUri)
+            }
+            if(requestCode == REQUEST_CODE_SIGN_IN){
+                if(data == null){
+                    return
+                }
+                handleSignInResult(data)
             }
         }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -109,6 +143,54 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun requestSignIn() {
+        Log.d(LOG_TAG, "Requesting sign in")
+
+        val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestScopes(Scope(DriveScopes.DRIVE_FILE))
+            .build()
+        val client = GoogleSignIn.getClient(this, signInOptions)
+
+        startActivityForResult(client.signInIntent, REQUEST_CODE_SIGN_IN)
+    }
+
+    private fun handleSignInResult(result: Intent){
+        GoogleSignIn.getSignedInAccountFromIntent(result)
+            .addOnSuccessListener { googleSignInAccount ->
+                Log.d(LOG_TAG, "Signed in as ${googleSignInAccount.email}")
+
+                val credential = GoogleAccountCredential.usingOAuth2(
+                    this,
+                    Collections.singleton(DriveScopes.DRIVE_FILE)
+                )
+                credential.setSelectedAccount(googleSignInAccount.account)
+                val googleDriveService = Drive.Builder(
+                    AndroidHttp.newCompatibleTransport(),
+                    GsonFactory(),
+                    credential)
+                    .setApplicationName("QshaRe")
+                    .build()
+
+                driveServiceHelper = DriveServiceHelper(googleDriveService)
+                signedIn = true
+            }
+            .addOnFailureListener {exception ->
+                Log.e(LOG_TAG, "Unable to sign in, $exception")
+            }
+    }
+
+    private fun openFileFromFilePicker(uri: Uri) {
+        if(this::driveServiceHelper.isInitialized){
+            Log.d(LOG_TAG, "Opening ${uri.path}")
+
+            driveServiceHelper.openFileUsingStorageAccessFramework(contentResolver, uri)
+                .addOnSuccessListener { nameAndContent ->
+                    Log.d(LOG_TAG, "Got file: ${nameAndContent.first}")
+                }
         }
     }
 }
