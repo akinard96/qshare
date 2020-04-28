@@ -108,6 +108,7 @@ class MainActivity : AppCompatActivity() {
                 val fileUri = data.data ?: return
                 Log.d(LOG_TAG, "file received: $fileUri")
                 openFileFromFilePicker(fileUri)
+                uploadFileFromFilePicker(fileUri)
             }
             if(requestCode == REQUEST_CODE_SIGN_IN){
                 if(data == null){
@@ -183,13 +184,29 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Opens a file metadata and contents (useful for debug)
+     */
     private fun openFileFromFilePicker(uri: Uri) {
         if(this::driveServiceHelper.isInitialized){
             Log.d(LOG_TAG, "Opening ${uri.path}")
 
-            driveServiceHelper.openFileUsingStorageAccessFramework(contentResolver, uri)
+            driveServiceHelper.openFileUsingStorageAccessFramework(contentResolver, uri, this)
                 .addOnSuccessListener { nameAndContent ->
                     Log.d(LOG_TAG, "Got file: ${nameAndContent.first}")
+                }
+        }
+    }
+
+    /**
+     * Uploads a file at a specified URI to google drive
+     */
+    private fun uploadFileFromFilePicker(uri: Uri){
+        if(this::driveServiceHelper.isInitialized){
+            driveServiceHelper.openFileUsingStorageAccessFramework(contentResolver, uri, this)
+                .addOnSuccessListener { nameAndContent ->
+                    Log.d(LOG_TAG, "Got file: ${nameAndContent.first}")
+                    driveServiceHelper.uploadFileToDrive(this, nameAndContent, uri)
                 }
         }
     }
