@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "149920250281",
+    "firebase_url": "https://qshare-1d28b.firebaseio.com",
+    "project_id": "qshare-1d28b",
+    "storage_bucket": "qshare-1d28b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149920250281:android:d7d52107594117b5b46cb8",
+        "android_client_info": {
+          "package_name": "com.fourdudes.qshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "149920250281-b83312cmqdjmpoe0184ge2hknqan3nm6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPgVU1PtMOdXczRV43fsTVaF1g5XyfVfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "149920250281-b83312cmqdjmpoe0184ge2hknqan3nm6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
