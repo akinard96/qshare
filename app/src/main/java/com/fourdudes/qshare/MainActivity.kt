@@ -1,8 +1,11 @@
 package com.fourdudes.qshare
 
+import android.app.Activity
 import android.content.Intent
+import android.content.Intent.*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -12,9 +15,12 @@ import com.fourdudes.qshare.HelpPage.HelpActivity
 import com.fourdudes.qshare.Scan.ScanActivity
 import com.fourdudes.qshare.Settings.SettingsActivity
 import com.fourdudes.qshare.list.ItemListFragment
-import com.google.android.material.snackbar.Snackbar
-import com.leinardi.android.speeddial.SpeedDialActionItem
+import com.google.android.gms.drive.Drive
+import com.google.android.gms.drive.DriveFile
 import com.leinardi.android.speeddial.SpeedDialView
+
+const val REQUEST_CODE_FILE = 0
+const val LOG_TAG = "4dudes.MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,6 +46,11 @@ class MainActivity : AppCompatActivity() {
                         "open android file selector",
                         Toast.LENGTH_SHORT)
                     .show()
+                    val intent = Intent(ACTION_GET_CONTENT)
+                    intent.type = "*/*"
+                    val chooserIntent = createChooser(intent, "Choose a file!")
+                    startActivityForResult(chooserIntent, REQUEST_CODE_FILE)
+//                    intent.putExtra(CATEGORY_OPENABLE)
                     speedDialView.close()
                     true
                 }
@@ -57,6 +68,21 @@ class MainActivity : AppCompatActivity() {
 //        speedDialView.addActionItem(
 //            SpeedDialActionItem.Builder(R.id.fab_no_label, R.drawable.ic_link_white_24dp)
 //                .create())
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(resultCode != Activity.RESULT_OK){
+            return
+        }
+        else {
+            if(requestCode == REQUEST_CODE_FILE){
+                if(data == null){
+                    return
+                }
+                val fileUri = data.data ?: return
+                Log.d(LOG_TAG, "file received: $fileUri")
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
