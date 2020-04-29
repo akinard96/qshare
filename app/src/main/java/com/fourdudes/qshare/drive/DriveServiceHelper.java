@@ -12,9 +12,15 @@ import androidx.core.util.Pair;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.api.client.googleapis.batch.BatchRequest;
+import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
+import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.FileContent;
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.Permission;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -22,11 +28,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import kotlin.Triple;
 
 
 public class DriveServiceHelper {
@@ -126,7 +131,7 @@ public class DriveServiceHelper {
         });
     }
 
-    public Task<Boolean> uploadFileToDrive(Context context, Pair<Pair<String, String>, java.io.File> fileInfo, Uri uri){
+    public Task<File> uploadFileToDrive(Context context, Pair<Pair<String, String>, java.io.File> fileInfo, Uri uri){
         return Tasks.call(mExecutor, () -> {
             //create metadata
             File fileMetadata = new File();
@@ -141,16 +146,33 @@ public class DriveServiceHelper {
             FileContent mediaContent = new FileContent(fileInfo.first.second, fileInfo.second);
             try{
                 File file = driveService.files().create(fileMetadata, mediaContent)
-                        .setFields("id")
+                        .setFields("id, webViewLink")
                         .execute();
-                Log.d(LOG_TAG, "successfully uploaded file with id " + file.getId());
-                return true;
+                Log.d(LOG_TAG, "successfully uploaded file with id " + file.getId() + file.getWebViewLink());
+                return file;
             }
             catch (java.io.IOException exception){
                 Log.e(LOG_TAG, "Could not upload file to drive," + exception);
             }
-            return false;
+            return null;
         });
     }
 
+    public Task<Boolean> setSharePublic(String fileId){
+        return Tasks.call(mExecutor, () -> {
+            Permission userPermission = new Permission()
+                .setType("anyone")
+                .setRole("commenter");
+            try {
+                driveService.permissions().create(fileId, userPermission)
+                    .setFields("id")
+                    .execute();
+                return true;
+            }
+            catch(java.io.IOException exception){
+                Log.e(LOG_TAG, "unable to set permission, " + exception);
+            }
+            return false;
+        });
+    }
 }

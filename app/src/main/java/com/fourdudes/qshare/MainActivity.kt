@@ -207,6 +207,17 @@ class MainActivity : AppCompatActivity() {
                 .addOnSuccessListener { nameAndContent ->
                     Log.d(LOG_TAG, "Got file: ${nameAndContent.first}")
                     driveServiceHelper.uploadFileToDrive(this, nameAndContent, uri)
+                        .addOnSuccessListener { driveFileRef ->
+//                            driveServiceHelper.getDriveLink(driveFileRef.id)
+//                                .addOnSuccessListener { link ->
+//                                    Log.d(LOG_TAG, "Got url, $link")
+//                                }
+                            Log.d(LOG_TAG, "Got url, ${driveFileRef.webViewLink}")
+                            driveServiceHelper.setSharePublic(driveFileRef.id)
+                                .addOnSuccessListener {
+                                    Log.d(LOG_TAG, "Successfully set share permission!")
+                                }
+                        }
                 }
         }
     }
