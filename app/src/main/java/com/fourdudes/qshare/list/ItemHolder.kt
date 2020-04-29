@@ -17,8 +17,6 @@ class ItemHolder(val view: View) : RecyclerView.ViewHolder(view) {
     private val titleTextView: TextView = itemView.findViewById(R.id.list_item_item_title)
     private val descriptionTextView: TextView = itemView.findViewById(R.id.list_item_item_decription)
     private val sentRecImageView: ImageView = itemView.findViewById(R.id.list_item_item_sent_rec)
-    private val shareImageView: ImageView = itemView.findViewById(R.id.list_item_item_image_share)
-    private val qrImageView: ImageView = itemView.findViewById(R.id.list_item_item_image_qr)
 
     fun bind(item: Item, clickListener: (Item) -> Unit) {
         this.item = item

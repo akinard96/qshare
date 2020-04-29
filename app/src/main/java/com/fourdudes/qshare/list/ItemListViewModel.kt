@@ -2,20 +2,16 @@ package com.fourdudes.qshare.list
 
 import androidx.lifecycle.ViewModel
 import com.fourdudes.qshare.data.Item
+import com.fourdudes.qshare.data.ItemRepository
 
-class ItemListViewModel : ViewModel() {
-    val items = mutableListOf<Item>()
+class ItemListViewModel(private val itemRepository: ItemRepository) : ViewModel() {
+    val itemLiveData = itemRepository.getItems()
 
-    init {
-        for (i in 0 until 5) {
-            val item = Item()
-            item.name = "Item #$i"
-            item.isSent = i % 2 == 0
-            item.description = when(item.isSent) {
-                true -> "sent item"
-                false -> "received item"
-            }
-            items += item
-        }
+    fun addItem(item: Item) {
+        itemRepository.addItem(item)
+    }
+
+    fun deleteItem() {
+        itemRepository.deleteItem()
     }
 }

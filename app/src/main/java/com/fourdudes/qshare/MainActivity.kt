@@ -2,7 +2,6 @@ package com.fourdudes.qshare
 
 import android.app.Activity
 import android.content.Intent
-import android.content.Intent.*
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,10 +14,10 @@ import com.fourdudes.qshare.AboutPage.AboutActivity
 import com.fourdudes.qshare.HelpPage.HelpActivity
 import com.fourdudes.qshare.Scan.ScanActivity
 import com.fourdudes.qshare.Settings.SettingsActivity
+import com.fourdudes.qshare.detail.ItemDetailFragment
 import com.fourdudes.qshare.drive.DriveServiceHelper
 import com.fourdudes.qshare.list.ItemListFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.client.extensions.android.http.AndroidHttp
@@ -26,8 +25,6 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.leinardi.android.speeddial.SpeedDialView
 import java.util.*
 
@@ -35,7 +32,7 @@ const val REQUEST_CODE_FILE = 0
 const val REQUEST_CODE_SIGN_IN = 1
 const val LOG_TAG = "4dudes.MainActivity"
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
 
     private lateinit var driveServiceHelper: DriveServiceHelper
     private lateinit var driveService: Drive
@@ -45,12 +42,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.list_holder)
-        if(currentFragment == null) {
+        // Set current frag to Item list view
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+        if (currentFragment == null) {
             val fragment = ItemListFragment()
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.list_holder, fragment)
+                .add(R.id.fragment_container, fragment)
                 .commit()
         }
 
@@ -220,5 +218,17 @@ class MainActivity : AppCompatActivity() {
                         }
                 }
         }
+    }
+
+    /**
+     * Brings up QR code detail view of selected item
+     */
+    override fun onItemSelected(itemId: UUID) {
+        val fragment = ItemDetailFragment.newInstance(itemId)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

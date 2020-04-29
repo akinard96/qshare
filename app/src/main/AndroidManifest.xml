@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".HelpPage.HelpActivity"></activity>
         <activity android:name=".AboutPage.AboutActivity" />
-        <activity android:name=".ViewCode.ViewCode" />
+        <activity android:name=".detail.ItemDetailFragment" />
         <activity
             android:name=".Settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
