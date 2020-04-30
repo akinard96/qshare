@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,34 +8,10 @@
     tools:context=".Scan.ScanActivity">
 
 
-    <TextView
-        android:id="@+id/pageName"
+    <FrameLayout
+        android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:lineSpacingExtra="14sp"
-        android:text="@string/scanner"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:typeface="sans" />
-
-    <SurfaceView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_centerInParent="true"
-        app:srcCompat="@android:color/black"/>
-
-    <TextView
-        android:id="@+id/url"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Please scan QR code"
-        android:textAlignment="center"
-        android:layout_marginTop="30dp"
-        android:textSize="30sp"
-        android:layout_below="@+id/imageView"/>
+        android:layout_height="match_parent"/>
 
 
-</RelativeLayout>
+</FrameLayout>

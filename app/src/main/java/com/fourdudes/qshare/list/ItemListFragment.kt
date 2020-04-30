@@ -12,8 +12,12 @@ import com.fourdudes.qshare.R
 import com.fourdudes.qshare.data.Item
 import java.util.*
 
+private const val LOG_TAG = "4dudes.ItemListFragment"
+private const val KEY_QR_CODE = "qr_code"
+private const val KEY_NEW_FILE = "new_file"
+
 class ItemListFragment : Fragment() {
-    private val LOG_TAG = "4dudes.ItemListFragment"
+
 
     interface Callbacks {
         fun onItemSelected(itemId: UUID)
@@ -41,6 +45,33 @@ class ItemListFragment : Fragment() {
         val factory = ItemListViewModelFactory(requireContext())
         itemListViewModel = ViewModelProvider(this, factory)
             .get(ItemListViewModel::class.java)
+
+        // Check for new QR code or new file
+        val qrLink: String? = arguments?.getString(KEY_QR_CODE)
+        val newFileLink: String? = arguments?.getString(KEY_NEW_FILE)
+
+        if (qrLink != null) {
+            Log.d("448.ScanActivity", "QR code link received (ItemListFrag): $qrLink")
+            // Create and send to detail view
+            var item = Item()
+            item.link = qrLink
+            item.name = "Sent File"
+            item.description = "Scanned from QR code"
+            item.isSent = true
+            itemListViewModel.addItem(item)
+            callbacks?.onItemSelected(item.id)
+        }
+        else if (newFileLink != null) {
+            Log.d("448.ScanActivity", "New File Upload link received (ItemListFrag): $newFileLink")
+            // Create and send to detail view
+            var item = Item()
+            item.link = newFileLink
+            item.name = "Uploaded File"
+            item.description = "Uploaded from phone"
+            item.isSent = false
+            itemListViewModel.addItem(item)
+            callbacks?.onItemSelected(item.id)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -71,13 +102,6 @@ class ItemListFragment : Fragment() {
                 }
             }
         )
-
-        // TODO: Remove testing item
-        val item = Item()
-        item.description = "new file"
-        item.name = "File"
-        item.link = "www.google.com/p3ni5L0l"
-        itemListViewModel.addItem(item)
     }
 
     private fun updateUI(items: List<Item>) {

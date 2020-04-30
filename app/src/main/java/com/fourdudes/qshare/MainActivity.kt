@@ -1,7 +1,9 @@
 package com.fourdudes.qshare
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +12,9 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
+import android.widget.Toast.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.fourdudes.qshare.AboutPage.AboutActivity
 import com.fourdudes.qshare.HelpPage.HelpActivity
 import com.fourdudes.qshare.Scan.ScanActivity
@@ -30,6 +35,11 @@ import java.util.*
 
 const val REQUEST_CODE_FILE = 0
 const val REQUEST_CODE_SIGN_IN = 1
+const val REQUEST_CODE_CAMERA_PERMISSION = 2
+private const val KEY_QR_CODE = "qr_code"
+private const val KEY_NEW_FILE = "new_file"
+private const val REQUIRED_CAMERA_PERMISSION = android.Manifest.permission.CAMERA
+
 const val LOG_TAG = "4dudes.MainActivity"
 
 class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
@@ -46,11 +56,28 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
         if (currentFragment == null) {
             val fragment = ItemListFragment()
+
+            // Check for QR link
+            val link: String? = intent.extras?.getString(KEY_QR_CODE)
+            if ( link != null ) {
+                // Coming from scanner
+                Log.d("448.ScanActivity", "Extra received: $link")
+
+                // Attach link to bundle
+                val args = Bundle().apply {
+                    putSerializable(KEY_QR_CODE, link)
+                }
+                fragment.apply {
+                    arguments = args
+                }
+            }
+            // Start transaction
             supportFragmentManager
                 .beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .commit()
         }
+
 
         //prompt the user to sign in via google drive
         requestSignIn()
@@ -58,11 +85,12 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
         val speedDialView = findViewById<SpeedDialView>(R.id.speed_dial)
         speedDialView.inflate(R.menu.fab_actions_menu)
         speedDialView.setOnActionSelectedListener(SpeedDialView.OnActionSelectedListener { actionItem ->
-            when(actionItem.id) {
+            when (actionItem.id) {
                 R.id.upload_fab -> {
-                    Toast.makeText(this,
+                    makeText(this,
                         "open android file selector",
-                        Toast.LENGTH_SHORT)
+                        LENGTH_SHORT
+                    )
                     .show()
 
                     if(signedIn){
@@ -79,10 +107,26 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
                     true
                 }
                 R.id.scan_fab -> {
-                    val intent = Intent(this, ScanActivity::class.java)
-                    startActivity(intent)
-                    speedDialView.close()
-                    true
+                    // Permissions
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        if( ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_CAMERA_PERMISSION ) ) {
+                            Log.d("camera_perm", "Showing user camera permission explanation")
+                            makeText(baseContext,
+                                R.string.camera_permission_rationale,
+                                LENGTH_SHORT)
+                                .show()
+                            false
+                        } else {
+                            Log.d("camera_perm", "No explanation needed, just request camera permission")
+                            requestPermissions(listOf(REQUIRED_CAMERA_PERMISSION).toTypedArray(), REQUEST_CODE_CAMERA_PERMISSION)
+                            false
+                        }
+                    } else {
+                        val intent = Intent(this, ScanActivity::class.java)
+                        startActivity(intent)
+                        speedDialView.close()
+                        true
+                    }
                 }
                 else -> {
                     false
@@ -113,6 +157,13 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
                     return
                 }
                 handleSignInResult(data)
+            }
+            if(requestCode == REQUEST_CODE_CAMERA_PERMISSION) {
+                if (resultCode == Activity.RESULT_OK) {
+                    Log.d("camera_perm", "Result ok, permission granted")
+                    val intent = Intent(this, ScanActivity::class.java)
+                    startActivity(intent)
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -211,10 +262,26 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
 //                                    Log.d(LOG_TAG, "Got url, $link")
 //                                }
                             Log.d(LOG_TAG, "Got url, ${driveFileRef.webViewLink}")
+
+                            // Send to ItemListFrag to process
+                            val fragment = ItemListFragment()
+                            val args = Bundle().apply {
+                                putSerializable(KEY_NEW_FILE, driveFileRef.webViewLink as String)
+                            }
+                            fragment.apply {
+                                arguments = args
+                            }
+
                             driveServiceHelper.setSharePublic(driveFileRef.id)
                                 .addOnSuccessListener {
                                     Log.d(LOG_TAG, "Successfully set share permission!")
                                 }
+
+                            // Start transaction
+                            supportFragmentManager
+                                .beginTransaction()
+                                .add(R.id.fragment_container, fragment)
+                                .commit()
                         }
                 }
         }

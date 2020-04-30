@@ -1,33 +1,37 @@
 package com.fourdudes.qshare.detail
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.fourdudes.qshare.R
 import com.fourdudes.qshare.data.Item
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.WriterException
+import com.google.zxing.common.BitMatrix
+import com.journeyapps.barcodescanner.BarcodeEncoder
+import kotlinx.android.synthetic.main.activity_scan.*
 import java.util.*
 
 private const val LOG_TAG = "448.ItemDetailFrag"
+private const val KEY_QR_CODE = "qr_code"
 private const val ARG_ITEM_ID = "item_id"
 
 class ItemDetailFragment : Fragment() {
-
-    /**
-     * Display item detail with QR code
-     * Provide external link to open drive link
-     */
 
     private lateinit var itemDetailViewModel: ItemDetailViewModel
 
     private lateinit var itemFileName: TextView
     private lateinit var itemDate: TextView
     private lateinit var itemLink: TextView
-    // TODO: Var for QR code, formatting
+    private lateinit var qrCode: ImageView
 
     // Puts itemId on bundle to create view
     companion object {
@@ -70,28 +74,38 @@ class ItemDetailFragment : Fragment() {
         itemFileName = view.findViewById(R.id.file_name) as TextView
         itemDate = view.findViewById(R.id.file_date) as TextView
         itemLink = view.findViewById(R.id.drive_link) as TextView
+        qrCode = view.findViewById(R.id.qr_code) as ImageView
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // Link crime
+        // Link item
         itemDetailViewModel.itemLiveData.observe(
             viewLifecycleOwner,
             androidx.lifecycle.Observer { item ->
                 item?.let {
+                    // Have to assign vals here, it wouldn't let me set a local variable to LiveData item
                     itemFileName.text = item.name
                     itemDate.text = item.date.toString()
                     itemLink.text = item.link
+                    generateQR(item.link)
                     Log.d(LOG_TAG, "Name: ${item.name}, Date: ${item.date}, Link: ${item.link}")
                 }
             }
         )
-
-        // Link text, QR
-
-        // TODO: QR CODE
     }
 
+    private fun generateQR(link: String) {
+        val multiFormatWriter = MultiFormatWriter()
+        try {
+            val bitMatrix = multiFormatWriter.encode(link, BarcodeFormat.QR_CODE,200,200)
+            val barcodeEncoder = BarcodeEncoder()
+            val bitmap = barcodeEncoder.createBitmap(bitMatrix)
+            qrCode.setImageBitmap(bitmap)
+        } catch (e: WriterException) {
+            e.printStackTrace()
+        }
+    }
 
 }

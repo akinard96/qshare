@@ -21,4 +21,7 @@
     <string name="about">About</string>
     <string name="help">Help</string>
     <string name="share">Share</string>
+
+    <!-- Permissions -->
+    <string name="camera_permission_rationale">Please allow use of your camera to use this feature</string>
 </resources>
