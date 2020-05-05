@@ -280,7 +280,7 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
                             // Start transaction
                             supportFragmentManager
                                 .beginTransaction()
-                                .add(R.id.fragment_container, fragment)
+                                .replace(R.id.fragment_container, fragment)
                                 .commit()
                         }
                 }

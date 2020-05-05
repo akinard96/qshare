@@ -22,16 +22,6 @@ private const val REQUIRED_CAMERA_PERMISSION = android.Manifest.permission.CAMER
 
 class ScanActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
 
-    /**
-     * Call activity from MainActivity, intent
-     * start camera, scan, close camera
-     * attach link to extra, maybe other stuff from google API
-     * intent back to main activity
-     * main - onActivityResult or something
-     * make new db entry, load frag with UUID
-     * prompt user to view? depends on how we know if it's a new code back in DetailFrag
-     */
-
     private lateinit var mScannerView: ZXingScannerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,11 +59,12 @@ class ScanActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
 
         // Prints scan results
         Log.d(LOG_TAG, rawResult.text)
-        // Prints the scan format (qrcode, pdf417 etc.)
+
         // Prints the scan format (qrcode, pdf417 etc.)
         Log.d(LOG_TAG, rawResult.barcodeFormat.toString())
 
         // Intent to MainActivity, extra is link right now
+        // Could be modified to file name, desc?
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra(KEY_QR_CODE, rawResult.text)
         setResult(Activity.RESULT_OK, intent)

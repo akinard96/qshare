@@ -21,8 +21,8 @@ import kotlinx.android.synthetic.main.activity_scan.*
 import java.util.*
 
 private const val LOG_TAG = "448.ItemDetailFrag"
-private const val KEY_QR_CODE = "qr_code"
 private const val ARG_ITEM_ID = "item_id"
+private const val ARG_NEW_FILE_BOOL = "new_file"
 
 class ItemDetailFragment : Fragment() {
 
@@ -106,6 +106,11 @@ class ItemDetailFragment : Fragment() {
         } catch (e: WriterException) {
             e.printStackTrace()
         }
+    }
+
+    // TODO: Dialog box that will take user to link if new
+    private fun openNewFileDialog(link: String) {
+
     }
 
 }

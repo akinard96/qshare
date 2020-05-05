@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.ExpandableListView
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.fourdudes.qshare.R
 import com.fourdudes.qshare.data.Item
@@ -25,11 +26,12 @@ class ItemHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         titleTextView.text = this.item.name
         descriptionTextView.text = this.item.description
-        sentRecImageView.rotation = when(this.item.isSent){
-            true -> 0.toFloat()
-            false -> 180.toFloat()
-        }
-
+        sentRecImageView.setImageResource(
+            when (this.item.isSent) {
+                true -> R.drawable.ic_sent
+                false -> R.drawable.ic_received
+            }
+        )
     }
 
 
