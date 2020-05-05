@@ -265,10 +265,6 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
 //                                }
                             Log.d(LOG_TAG, "Name: ${nameAndContent.first?.first}, Description: ${nameAndContent.first?.second}")
 
-
-                            //TODO extract name to QR code
-                            Log.d(LOG_TAG, "Got name, ${driveFileRef.name}")
-
                             // Send to ItemListFrag to process
                             val fragment = ItemListFragment()
                             val args = Bundle().apply {
