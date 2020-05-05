@@ -55,7 +55,7 @@ class ItemListFragment : Fragment() {
             // Create and send to detail view
             var item = Item()
             item.link = qrLink
-            item.name = "Sent File"
+            item.name = "Received File"
             item.description = "Scanned from QR code"
             item.isSent = true
             itemListViewModel.addItem(item)

@@ -3,7 +3,7 @@
     <item
         android:id="@+id/upload_fab"
         android:title="Upload"
-        android:icon="@drawable/ic_qr_fab" />
+        android:icon="@drawable/ic_sent" />
 
     <item
         android:id="@+id/scan_fab"

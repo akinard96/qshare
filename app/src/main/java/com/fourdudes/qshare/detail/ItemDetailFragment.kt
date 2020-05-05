@@ -1,11 +1,15 @@
 package com.fourdudes.qshare.detail
 
+import android.content.Intent
+import android.content.Intent.EXTRA_SUBJECT
+import android.content.Intent.EXTRA_TEXT
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -31,6 +35,7 @@ class ItemDetailFragment : Fragment() {
     private lateinit var itemFileName: TextView
     private lateinit var itemDate: TextView
     private lateinit var itemLink: TextView
+    private lateinit var shareButton: Button
     private lateinit var qrCode: ImageView
 
     // Puts itemId on bundle to create view
@@ -75,6 +80,8 @@ class ItemDetailFragment : Fragment() {
         itemDate = view.findViewById(R.id.file_date) as TextView
         itemLink = view.findViewById(R.id.drive_link) as TextView
         qrCode = view.findViewById(R.id.qr_code) as ImageView
+        shareButton = view.findViewById(R.id.share_button) as Button
+        shareButton.setOnClickListener { shareFile() }
 
         return view
     }
@@ -111,6 +118,20 @@ class ItemDetailFragment : Fragment() {
     // TODO: Dialog box that will take user to link if new
     private fun openNewFileDialog(link: String) {
 
+    }
+
+    private fun shareFile() {
+        val sharingIntent = Intent(Intent.ACTION_SEND)
+        val link = itemLink.text
+        val message = "Click this link to view a document in Google Drive: "
+
+        sharingIntent.apply {
+            type = "text/plain"
+            putExtra(EXTRA_SUBJECT, message)
+            putExtra(EXTRA_TEXT, link)
+        }
+
+        startActivity(Intent.createChooser(sharingIntent, "Share via"))
     }
 
 }
