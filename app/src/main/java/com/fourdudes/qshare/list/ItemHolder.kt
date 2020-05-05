@@ -28,8 +28,8 @@ class ItemHolder(val view: View) : RecyclerView.ViewHolder(view) {
         descriptionTextView.text = this.item.description
         sentRecImageView.setImageResource(
             when (this.item.isSent) {
-                true -> R.drawable.ic_sent
-                false -> R.drawable.ic_received
+                false -> R.drawable.ic_sent
+                true -> R.drawable.ic_received
             }
         )
     }

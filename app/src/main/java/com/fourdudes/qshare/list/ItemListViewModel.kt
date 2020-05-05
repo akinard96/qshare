@@ -3,6 +3,7 @@ package com.fourdudes.qshare.list
 import androidx.lifecycle.ViewModel
 import com.fourdudes.qshare.data.Item
 import com.fourdudes.qshare.data.ItemRepository
+import java.util.*
 
 class ItemListViewModel(private val itemRepository: ItemRepository) : ViewModel() {
     val itemLiveData = itemRepository.getItems()
@@ -11,7 +12,8 @@ class ItemListViewModel(private val itemRepository: ItemRepository) : ViewModel(
         itemRepository.addItem(item)
     }
 
-    fun deleteItem() {
-        itemRepository.deleteItem()
+    fun deleteItem(itemId: UUID) {
+        itemRepository.deleteItem(itemId)
     }
+
 }

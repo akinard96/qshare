@@ -38,9 +38,11 @@ const val REQUEST_CODE_SIGN_IN = 1
 const val REQUEST_CODE_CAMERA_PERMISSION = 2
 private const val KEY_QR_CODE = "qr_code"
 private const val KEY_NEW_FILE = "new_file"
+private const val KEY_FILE_NAME = "file_name"
+private const val KEY_FILE_DESC = "file_desc"
 private const val REQUIRED_CAMERA_PERMISSION = android.Manifest.permission.CAMERA
 
-const val LOG_TAG = "4dudes.MainActivity"
+const val LOG_TAG = "4dudes.MainActivityLog"
 
 class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
 
@@ -261,12 +263,15 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
 //                                .addOnSuccessListener { link ->
 //                                    Log.d(LOG_TAG, "Got url, $link")
 //                                }
-                            Log.d(LOG_TAG, "Got url, ${driveFileRef.webViewLink}")
+                            Log.d(LOG_TAG, "Name: ${nameAndContent.first?.first}, Description: ${nameAndContent.first?.second}")
+
 
                             // Send to ItemListFrag to process
                             val fragment = ItemListFragment()
                             val args = Bundle().apply {
                                 putSerializable(KEY_NEW_FILE, driveFileRef.webViewLink as String)
+                                putSerializable(KEY_FILE_NAME, nameAndContent.first?.first as String)
+                                putSerializable(KEY_FILE_DESC, nameAndContent.first?.second as String)
                             }
                             fragment.apply {
                                 arguments = args

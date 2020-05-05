@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fourdudes.qshare.R
@@ -15,6 +16,8 @@ import java.util.*
 private const val LOG_TAG = "4dudes.ItemListFragment"
 private const val KEY_QR_CODE = "qr_code"
 private const val KEY_NEW_FILE = "new_file"
+private const val KEY_FILE_NAME = "file_name"
+private const val KEY_FILE_DESC = "file_desc"
 
 class ItemListFragment : Fragment() {
 
@@ -63,11 +66,14 @@ class ItemListFragment : Fragment() {
         }
         else if (newFileLink != null) {
             Log.d("448.ScanActivity", "New File Upload link received (ItemListFrag): $newFileLink")
+            // Get name/desc
+            val name: String = arguments?.getString(KEY_FILE_NAME) ?: "Unknown File Name"
+            val desc: String = arguments?.getString(KEY_FILE_DESC) ?: "Unknown file type"
             // Create and send to detail view
             var item = Item()
             item.link = newFileLink
-            item.name = "Uploaded File"
-            item.description = "Uploaded from phone"
+            item.name = name
+            item.description = "File Type: $desc"
             item.isSent = false
             itemListViewModel.addItem(item)
             callbacks?.onItemSelected(item.id)
@@ -99,6 +105,10 @@ class ItemListFragment : Fragment() {
             androidx.lifecycle.Observer { items ->
                 items?.let {
                     updateUI(items)
+
+                    val itemTouchHelperCallback = GestureControlHelper(itemListAdapter)
+                    val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
+                    touchHelper.attachToRecyclerView(itemListRecyclerView)
                 }
             }
         )
@@ -106,7 +116,7 @@ class ItemListFragment : Fragment() {
 
     private fun updateUI(items: List<Item>) {
         // If item selected, callback
-        itemListAdapter = ItemListAdapter(items) { item: Item -> Unit
+        itemListAdapter = ItemListAdapter(items, itemListViewModel) { item: Item -> Unit
             callbacks?.onItemSelected(item.id)
         }
         itemListRecyclerView.adapter = itemListAdapter

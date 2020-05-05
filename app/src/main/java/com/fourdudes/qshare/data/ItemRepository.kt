@@ -9,6 +9,7 @@ class ItemRepository (private val itemDao: ItemDao) {
     private val executor = Executors.newSingleThreadExecutor()
 
     fun getItems(): LiveData<List<Item>> = itemDao.getItems()
+
     fun getItem(itemId: UUID): LiveData<Item?> = itemDao.getItem(itemId)
 
     fun addItem(item: Item) {
@@ -17,9 +18,15 @@ class ItemRepository (private val itemDao: ItemDao) {
         }
     }
 
-    fun deleteItem() {
+    fun deleteItems() {
         executor.execute {
-            itemDao.deleteItem()
+            itemDao.deleteItems()
+        }
+    }
+
+    fun deleteItem(itemId: UUID) {
+        executor.execute {
+            itemDao.deleteItem(itemId)
         }
     }
 
