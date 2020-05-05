@@ -64,7 +64,10 @@ class ScanActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
         Log.d(LOG_TAG, rawResult.barcodeFormat.toString())
 
         // Intent to MainActivity, extra is link right now
-        // Could be modified to file name, desc?
+        /** TODO: Could be modified to pass file name, desc
+         *  Insert as extras to decipher upon ListItemFragment creation in main
+         *  Link is rawResult.text
+         */
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra(KEY_QR_CODE, rawResult.text)
         setResult(Activity.RESULT_OK, intent)
