@@ -11,6 +11,14 @@ apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-kapt'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('Z:\\adit\\Downloads\\qshare.jks')
+            storePassword 'qshare99'
+            keyAlias = 'key0'
+            keyPassword 'qshare99'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
     defaultConfig {
