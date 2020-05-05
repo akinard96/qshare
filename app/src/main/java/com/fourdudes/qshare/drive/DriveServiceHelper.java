@@ -146,7 +146,7 @@ public class DriveServiceHelper {
             FileContent mediaContent = new FileContent(fileInfo.first.second, fileInfo.second);
             try{
                 File file = driveService.files().create(fileMetadata, mediaContent)
-                        .setFields("id, webViewLink")
+                        .setFields("id, webViewLink, name")
                         .execute();
                 Log.d(LOG_TAG, "successfully uploaded file with id " + file.getId() + file.getWebViewLink());
                 return file;
