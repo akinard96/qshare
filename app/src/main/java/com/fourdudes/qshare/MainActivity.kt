@@ -2,6 +2,8 @@ package com.fourdudes.qshare
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -23,6 +25,7 @@ import com.fourdudes.qshare.detail.ItemDetailFragment
 import com.fourdudes.qshare.drive.DriveServiceHelper
 import com.fourdudes.qshare.list.ItemListFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.client.extensions.android.http.AndroidHttp
@@ -92,9 +95,17 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
 
         //TODO move this so that it only prompts when actually uploading a file
         //prompt the user to sign in via google drive
-        requestSignIn()
+        val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(applicationContext)
+        if(account == null){ //user is not signed in
+            requestSignIn()
+        }
+        else{ //user is signed in
+            //instantiate drive service helper
+            driveServiceHelper = DriveServiceHelper(getGoogleDriveService(account))
 
-
+            //check intent for data and upload if given
+            checkIntent()
+        }
 
         val speedDialView = findViewById<SpeedDialView>(R.id.speed_dial)
         speedDialView.inflate(R.menu.fab_actions_menu)
@@ -107,14 +118,8 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
                     )
                     .show()
 
-                    if(signedIn){
-                        val chooserIntent = driveServiceHelper.createFilePickerIntent()
-                        startActivityForResult(chooserIntent, REQUEST_CODE_FILE)
-                    }
-                    else {
-                        Log.d(LOG_TAG, "User not signed in!")
-                        //TODO present dialog explaining that the user must sign in
-                    }
+                    val chooserIntent = driveServiceHelper.createFilePickerIntent()
+                    startActivityForResult(chooserIntent, REQUEST_CODE_FILE)
 
 //                    intent.putExtra(CATEGORY_OPENABLE)
                     speedDialView.close()
@@ -147,9 +152,6 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
                 }
             }
         })
-//        speedDialView.addActionItem(
-//            SpeedDialActionItem.Builder(R.id.fab_no_label, R.drawable.ic_link_white_24dp)
-//                .create())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -163,7 +165,7 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
                 }
                 val fileUri = data.data ?: return
                 Log.d(LOG_TAG, "file received: $fileUri")
-                openFileFromFilePicker(fileUri)
+//                openFileFromFilePicker(fileUri)
                 uploadFileFromFilePicker(fileUri)
             }
             if(requestCode == REQUEST_CODE_SIGN_IN){
@@ -219,39 +221,49 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
             .build()
         val client = GoogleSignIn.getClient(this, signInOptions)
 
-        startActivityForResult(client.signInIntent, REQUEST_CODE_SIGN_IN)
+        val alertBuilder = AlertDialog.Builder(this)
+        alertBuilder.apply {
+            setTitle("Let us access your Google Account")
+            setMessage("We need to be able to probe the depths of your Google Drive so that we can do our thing you know...")
+            setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, id ->
+                startActivityForResult(client.signInIntent, REQUEST_CODE_SIGN_IN)
+            })
+            setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
+                Toast.makeText(applicationContext, "We're serious we really need that, you are banished from QshaRe", Toast.LENGTH_LONG).show()
+                finish()
+            })
+            create()
+            show()
+        }
+
+
     }
 
     private fun handleSignInResult(result: Intent){
         GoogleSignIn.getSignedInAccountFromIntent(result)
             .addOnSuccessListener { googleSignInAccount ->
                 Log.d(LOG_TAG, "Signed in as ${googleSignInAccount.email}")
-
-                val credential = GoogleAccountCredential.usingOAuth2(
-                    this,
-                    Collections.singleton(DriveScopes.DRIVE_FILE)
-                )
-                credential.setSelectedAccount(googleSignInAccount.account)
-                val googleDriveService = Drive.Builder(
-                    AndroidHttp.newCompatibleTransport(),
-                    GsonFactory(),
-                    credential)
-                    .setApplicationName("QshaRe")
-                    .build()
-
-                driveServiceHelper = DriveServiceHelper(googleDriveService)
-                signedIn = true
-                if(intent != null){
-//            val myIntent = intent.
-                    intent.clipData.let { data ->
-                        data?.getItemAt(0)?.uri?.let { uploadFileFromFilePicker(it) }
-                    }
-                    Log.d(LOG_TAG, "Intent received, ${intent.clipData?.getItemAt(0)?.uri}")
-                }
+                driveServiceHelper = DriveServiceHelper(getGoogleDriveService(googleSignInAccount))
+                checkIntent()
             }
             .addOnFailureListener {exception ->
                 Log.e(LOG_TAG, "Unable to sign in, $exception")
             }
+    }
+
+    private fun getGoogleDriveService(googleAcoount: GoogleSignInAccount) : Drive {
+        val credential = GoogleAccountCredential.usingOAuth2(
+            this,
+            Collections.singleton(DriveScopes.DRIVE_FILE)
+        )
+        credential.selectedAccount = googleAcoount.account
+        val googleDriveService = Drive.Builder(
+            AndroidHttp.newCompatibleTransport(),
+            GsonFactory(),
+            credential)
+            .setApplicationName("QshaRe")
+            .build()
+        return googleDriveService
     }
 
     /**
@@ -307,6 +319,15 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
                                 .commit()
                         }
                 }
+        }
+    }
+
+    private fun checkIntent(){
+        intent.clipData.let { data ->
+            data?.getItemAt(0)?.uri?.let { uri ->
+                uploadFileFromFilePicker(uri)
+                Log.d(LOG_TAG, "Intent with data received, ${intent.clipData?.getItemAt(0)?.uri}")
+            }
         }
     }
 
