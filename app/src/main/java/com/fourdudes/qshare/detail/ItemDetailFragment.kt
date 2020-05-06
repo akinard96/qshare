@@ -37,6 +37,7 @@ class ItemDetailFragment : Fragment() {
     private lateinit var itemLink: TextView
     private lateinit var shareButton: Button
     private lateinit var qrCode: ImageView
+    private var link: String = ""
 
     // Puts itemId on bundle to create view
     companion object {
@@ -96,6 +97,7 @@ class ItemDetailFragment : Fragment() {
                     itemFileName.text = item.name
                     itemDate.text = item.date.toString()
                     itemLink.text = item.link
+                    link = item.link
                     generateQR(item.link)
                     Log.d(LOG_TAG, "Name: ${item.name}, Date: ${item.date}, Link: ${item.link}")
                 }
@@ -122,7 +124,6 @@ class ItemDetailFragment : Fragment() {
 
     private fun shareFile() {
         val sharingIntent = Intent(Intent.ACTION_SEND)
-        val link = itemLink.text
         val message = "Click this link to view a document in Google Drive: "
 
         sharingIntent.apply {
