@@ -31,7 +31,9 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.leinardi.android.speeddial.SpeedDialView
+import java.net.URI
 import java.util.*
+import java.util.stream.Stream
 
 const val REQUEST_CODE_FILE = 0
 const val REQUEST_CODE_SIGN_IN = 1
@@ -80,9 +82,19 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
                 .commit()
         }
 
+        //handle an intent(from intent filter)
+        // Figure out what to do based on the intent type
+//        if (intent?.type == "*/*") {
+//            intent.data?.let { uploadFileFromFilePicker(it) }
+//        } else {
+//            Log.d(LOG_TAG, "unsupported intent type, ${intent.type}")
+//        }
 
+        //TODO move this so that it only prompts when actually uploading a file
         //prompt the user to sign in via google drive
         requestSignIn()
+
+
 
         val speedDialView = findViewById<SpeedDialView>(R.id.speed_dial)
         speedDialView.inflate(R.menu.fab_actions_menu)
@@ -229,6 +241,13 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
 
                 driveServiceHelper = DriveServiceHelper(googleDriveService)
                 signedIn = true
+                if(intent != null){
+//            val myIntent = intent.
+                    intent.clipData.let { data ->
+                        data?.getItemAt(0)?.uri?.let { uploadFileFromFilePicker(it) }
+                    }
+                    Log.d(LOG_TAG, "Intent received, ${intent.clipData?.getItemAt(0)?.uri}")
+                }
             }
             .addOnFailureListener {exception ->
                 Log.e(LOG_TAG, "Unable to sign in, $exception")

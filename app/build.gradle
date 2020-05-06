@@ -13,7 +13,7 @@ apply plugin: 'kotlin-kapt'
 android {
     signingConfigs {
         debug {
-            storeFile file('Z:\\adit\\Downloads\\qshare.jks')
+            storeFile file('/home/caleb/Development/school/mobile-app/qshare.jks')
             storePassword 'qshare99'
             keyAlias = 'key0'
             keyPassword 'qshare99'
