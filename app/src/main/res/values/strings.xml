@@ -2,7 +2,7 @@
     <string name="app_name">QshaRe</string>
     <string name="settings">Settings</string>
     <string name="exit">Exit</string>
-    <string name="scanner">qShare Scanner</string>
+    <string name="scanner">QshaRe Scanner</string>
     <string name="title_activity_settings">Settings</string>
     <string name="share_button_label">Share</string>
 
@@ -35,7 +35,7 @@
     <string name="about_header">About QshaRe</string>
     <string name="about_dev">Developed By: 4Dudes LLC (Caleb Dudley, Jay Harrison, Adam Kinard, Grant Marsh)</string>
     <string name="about_version">Version: 1.0</string>
-    <string name="about_tag">QshaRe: An app that can do some things, but not all things. Use it wisely...</string>
+    <string name="about_tag">QshaRe: An app that can do some things, but not all things. Use it wisely…</string>
 
     <!-- Help Page -->
     <string name="help_label">Help Me!</string>
@@ -56,7 +56,15 @@
         else, you can click \"Share\" to choose which app you would like to use. </string>
     <string name="help_delete_label">Deleting Files</string>
     <string name="help_delete_desc">To delete an individual file, swipe right on the file on the Home
-        Page. To delete all of your files, go to the Settings Page and select the option \"Delete All
-        Files\". Be aware, this will delete ALL of your files irreversibly from the app. They will
+        Page. To delete all of your files, go to the Settings Page and select the relevant setting.
+        Beware, this will delete ALL of your files irreversibly from the app. They will
         NOT be deleted from Google Drive however, only from your app\'s memory.</string>
+    <string name="help_account_label">Changing Your Google Account</string>
+    <string name="help_account_desc">Visit the Settings Page to Sign In/Out of your Google Account.</string>
+    <string name="help_glitch_label">Something Looks Really Weird!?</string>
+    <string name="help_glitch_desc">Sorry about that! QshaRe is still in early development and you
+        might see some weird visual glitches from time to time. No need to panic, just restart the
+        app and those should go away. If you see something seriously wrong with our app, leave a
+        comment on our Google Play Store page with a description of what went wrong and we\'ll
+        get right on it. We appreciate any and all feedback!</string>
 </resources>
