@@ -37,4 +37,27 @@
     <string name="about_dev">Developed By: 4Dudes LLC (Caleb Dudley, Jay Harrison, Adam Kinard, Grant Marsh)</string>
     <string name="about_version">Version: 1.0</string>
     <string name="about_tag">QshaRe: An app that can do some things, but not all things. Use it wisely...</string>
+
+    <!-- Help Page -->
+    <string name="help_label">Help Me!</string>
+    <string name="help_upload_label">Uploading a New File</string>
+    <string name="help_upload_desc">To upload a new file, select the Floating Action Button at the
+        bottom right-hand side of the screen. From the options that appear, tap the \"Upload\" button
+        and the Android File Selector will appear to let you choose your file. For best results,
+        try to upload smaller documents as Google Drive has a size limit that could cause errors.</string>
+    <string name="help_qr_label">Scanning a QR Code</string>
+    <string name="help_qr_desc">To scan a QR code, select the Floating Action Button at the
+        bottom right-hand side of the screen. From the options that appear, tap the \"Scan Code\"
+        button and the Scanning Page will appear. Simply point your camera at a valid QR code and
+        QshaRe will automatically add the file to your list of available documents.</string>
+    <string name="help_view_label">Accessing and Sharing Your Files</string>
+    <string name="help_view_desc">To access a file and it\'s associated QR code, select any uploaded
+        or previously scanned file from the Home Page. This will bring up the detail view of your
+        file including a sharable QR code and link.\n\nTo share the Google Drive link with someone
+        else, you can click \"Share\" to choose which app you would like to use. </string>
+    <string name="help_delete_label">Deleting Files</string>
+    <string name="help_delete_desc">To delete an individual file, swipe right on the file on the Home
+        Page. To delete all of your files, go to the Settings Page and select the option \"Delete All
+        Files\". Be aware, this will delete ALL of your files irreversibly from the app. They will
+        NOT be deleted from Google Drive however, only from your app\'s memory.</string>
 </resources>
