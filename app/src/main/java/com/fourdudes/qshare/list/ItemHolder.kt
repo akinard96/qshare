@@ -1,11 +1,15 @@
 package com.fourdudes.qshare.list
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.media.Image
 import android.view.View
 import android.widget.ExpandableListView
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.fourdudes.qshare.R
 import com.fourdudes.qshare.data.Item
@@ -32,6 +36,18 @@ class ItemHolder(val view: View) : RecyclerView.ViewHolder(view) {
                 true -> R.drawable.ic_received
             }
         )
+        when(this.item.isSent){
+            false -> sentRecImageView.apply {
+                setImageResource(R.drawable.ic_sent)
+//                setColorFilter(R.color.sentColor)
+                ImageViewCompat.setImageTintList(sentRecImageView, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.sentColor)))
+            }
+            true -> sentRecImageView.apply {
+                setImageResource(R.drawable.ic_received)
+                ImageViewCompat.setImageTintList(sentRecImageView, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.receivedColor)))
+            }
+        }
+
     }
 
 

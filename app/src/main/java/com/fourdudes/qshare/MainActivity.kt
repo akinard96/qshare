@@ -55,6 +55,21 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
     private lateinit var driveService: Drive
     private var signedIn = false
 
+    override fun onStart() {
+        super.onStart()
+        val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(applicationContext)
+        if(account == null){ //user is not signed in
+            requestSignIn()
+        }
+        else{ //user is signed in
+            //instantiate drive service helper
+            driveServiceHelper = DriveServiceHelper(getGoogleDriveService(account))
+
+            //check intent for data and upload if given
+            checkIntent()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -95,17 +110,7 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
 
         //TODO move this so that it only prompts when actually uploading a file
         //prompt the user to sign in via google drive
-        val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(applicationContext)
-        if(account == null){ //user is not signed in
-            requestSignIn()
-        }
-        else{ //user is signed in
-            //instantiate drive service helper
-            driveServiceHelper = DriveServiceHelper(getGoogleDriveService(account))
 
-            //check intent for data and upload if given
-            checkIntent()
-        }
 
         val speedDialView = findViewById<SpeedDialView>(R.id.speed_dial)
         speedDialView.inflate(R.menu.fab_actions_menu)
@@ -219,7 +224,7 @@ class MainActivity : AppCompatActivity(), ItemListFragment.Callbacks {
             .requestEmail()
             .requestScopes(Scope(DriveScopes.DRIVE_FILE))
             .build()
-        val client = GoogleSignIn.getClient(this, signInOptions)
+        val client = GoogleSignIn.getClient(applicationContext, signInOptions)
 
         val alertBuilder = AlertDialog.Builder(this)
         alertBuilder.apply {

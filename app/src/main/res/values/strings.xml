@@ -12,24 +12,25 @@
     <string name="confirm_delete_message">Are you sure you want to delete %1$s?</string>
 
     <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
+    <string name="google_account_header">Google Account</string>
+    <string name="local_storage_header">Local Storage</string>
 
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
+    <!-- Google Account Preferences -->
+    <string name="sign_out_title">Sign Out</string>
+    <string name="sign_out_summary_fmt">Current account: %1$s</string>
+    <string name="key_sign_out">key_sign_out</string>
 
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="about">About</string>
-    <string name="help">Help</string>
-    <string name="share">Share</string>
+    <!-- Local Storage Preferences -->
+    <string name="clear_history_title">Clear Document History</string>
+    <string name="key_clear_history">key_clear_history</string>
 
     <!-- Permissions -->
     <string name="camera_permission_rationale">Please allow use of your camera to use this feature</string>
+
+    <!-- Menu Strings -->
+    <string name="about">About</string>
+    <string name="help">Help</string>
+    <string name="share">Share</string>
 
     <!-- About Page -->
     <string name="about_header">About QshaRe</string>
